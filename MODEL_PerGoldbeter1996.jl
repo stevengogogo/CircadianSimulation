@@ -36,9 +36,8 @@ function get_PER_MODEL()
 end
 
 
-function simulation(eqs)
+function simulation(PER)
     # The parameterset is from Ingalls
-    PER, labels = get_PER_MODEL()
     #SET VALUE
     u0 = [2,0,2.0,2.0,2.0]
     p = (
@@ -58,12 +57,10 @@ end
 
 
 # main
-
 #Simulation
 #if PROGRAM_FILE == @__FILE__
-
-eqs, labels = get_PER_MODEL()
-sol = simulation(eqs)
+PER, labels = get_PER_MODEL()
+sol = simulation(PER)
 
 # Plotting
 a = plot(sol, vars=(1,2,3), label=labels[1:3])
