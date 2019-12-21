@@ -1,10 +1,13 @@
 # Circadian Simulation
 
+|Time Series|Phase Plot|
+|---|---|
+|<img src="img/anim_timeSeries.gif">|<img src="img/anim_phasePlot.gif">|
+
 Author: Shao-Ting Chiu (stevengogogo4321@gmail.com)
 
 ---
 ## Abstract
-
 
 
 ## Outline
@@ -24,11 +27,14 @@ Author: Shao-Ting Chiu (stevengogogo4321@gmail.com)
 
 |Time Series|Phase Plot|
 |---|---|
-|<img src="img/timeSeries.png">|<img src="img/3d.png">|
+|<img src="img/timeSeries_three_0.2.png">|<img src="img/phasePlot_criticalpoint_0.2.png">|
+|<img src="img/timeSeries_three_0.6.png">|<img src="img/phasePlot_criticalpoint_0.6.png">|
+|<img src="img/timeSeries_three_0.95.png">|<img src="img/phasePlot_criticalpoint_0.95.png">|
+|<img src="img/timeSeries_three_1.9.png">|<img src="img/phasePlot_criticalpoint_1.9.png">|
+|<img src="img/timeSeries_three_3.2.png">|<img src="img/phasePlot_criticalpoint_3.2.png">|
 
 
 ## Installation
-1. 
 
 
 

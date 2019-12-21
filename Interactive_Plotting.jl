@@ -27,7 +27,7 @@ end
 # Interact setting
 
 ## TIME COURSE
-PER, labels = get_PER_MODEL()
+PER = get_PER_MODEL()
 labels = ["mRNA(m)","PER(p0)","PER-P(p1)","PER-PP(p2)","PER-Nucleus(pn)"]
 ui = @manipulate for t_end in 100.0:10.:300.0,
                         vd in slider(0.1:0.01:6., value=0.95, label="Vd (Decay rate of PER(uM/h))")
@@ -39,7 +39,6 @@ end
 
 
 ## Phase Plot
-gr()
 
 ui = @manipulate for t_end in 100.0:10.:300.0,
                         vd in slider(0.1:0.01:6., value=0.95, label="Vd (Decay rate of PER(uM/h))"),
@@ -47,5 +46,5 @@ ui = @manipulate for t_end in 100.0:10.:300.0,
                         v2 in slider(1:1:5, value=2, label="u2"),
                         v3 in slider(1:1:5, value=3, label="u3")
     sol = simulation_adjust(PER; vd=vd, tspan2=t_end)
-    plot(sol, vars=(v1,v2,v3), title="Phase Plot", xlabel=labels[v1], ylabel=labels[v2], zlabel=labels[v3])
+    plot(sol, vars=(v1,v2,v3), title="Phase Plot (vd = $vd)", xlabel=labels[v1], ylabel=labels[v2], zlabel=labels[v3])
 end
