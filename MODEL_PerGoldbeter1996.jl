@@ -79,7 +79,7 @@ sol = simulation(PER; vd=vd)
 cp = solve_steady_state(PER; vd=vd)
 
 
-# Plotting
+# Static Plotting
 
 labels = ["mRNA(m)" "PER(p0)" "PER-P(p1)" "PER-PP(p2)" "PER-Nucleus(pn)"]
 plot_num = (1, 4, 5)
