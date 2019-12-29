@@ -1,8 +1,5 @@
 using ModelingToolkit
 using DifferentialEquations
-using Plots
-plotly()
-
 #CHEMICAL REACTIONS
 mm(v, k, sub) = v*sub/(k+sub)
 hill(v,p,k,n) = v/(1+(p/k)^n)
@@ -21,11 +18,11 @@ function get_PER_MODEL()
     @derivatives D'~t
 
     eqs = [
-        D(m)  ~ hill(vs, pn, KI, n) - mm(vm, Km1, m),
-        D(p0) ~ ks*m - mm(V1, K1,p0) + mm(V2, K2, p1),
-        D(p1) ~ mm(V1, K1, p0) - mm(V2, K2,p1) - mm(V3, K3, p1) + mm(V4, K4, p2),
-        D(p2) ~ mm(V3, K3, p1) - mm(V4, K4, p2) - k1*p2 + k2*pn - mm(vd,Kd,p2),
-        D(pn) ~ k1*p2-k2*pn
+        D(m)  ~ hill(vs, pn, KI, n) - mm(vm, Km1, m), #mRNA(m)
+        D(p0) ~ ks*m - mm(V1, K1,p0) + mm(V2, K2, p1), #PER(p0)
+        D(p1) ~ mm(V1, K1, p0) - mm(V2, K2,p1) - mm(V3, K3, p1) + mm(V4, K4, p2), #PER-P(p1)
+        D(p2) ~ mm(V3, K3, p1) - mm(V4, K4, p2) - k1*p2 + k2*pn - mm(vd,Kd,p2), #PER-PP(p2)
+        D(pn) ~ k1*p2-k2*pn #PER-Nucleus(pn)
     ]
     de = ODESystem(eqs)
     PER = ODEFunction(de,
@@ -37,7 +34,7 @@ function get_PER_MODEL()
 end
 
 
-function get_param(;vd=0.95)
+function get_param(;vd=0.95, namedtuple=false)
     # From Goldbeter, 1996
     u0 = [2,0,2.0,2.0,2.0]
     p = (
@@ -47,10 +44,13 @@ function get_param(;vd=0.95)
         K1=1.0, K2=1.0, K3=1.0, K4=1.0,
         KI=1.0, Km1=0.5, Kd=0.2, n=4.0
         )
-    return u0, values(p)
+    if namedtuple == false
+        p = values(p)
+    end
+    return u0, p
 end
 
-function simulation(PER; vd=0.95)
+function solve_TimeSeries(PER; vd=0.95)
     # The parameterset is from Ingalls
     #SET VALUE
     u0, p = get_param(vd=vd)
@@ -69,50 +69,39 @@ function solve_steady_state(PER;vd=0.95)
     return cp
 end
 
-
-# MAIN
-#Simulation
-
-vd = 1.9
-PER= get_PER_MODEL()
-sol = simulation(PER; vd=vd)
-cp = solve_steady_state(PER; vd=vd)
-
-
-# Static Plotting
-
-labels = ["mRNA(m)" "PER(p0)" "PER-P(p1)" "PER-PP(p2)" "PER-Nucleus(pn)"]
-plot_num = (1, 4, 5)
-gr()
-
-# Phase Plot with critical point
-plot(sol, vars=plot_num, title="Phase Plot (vd=$vd)", xlabel=labels[plot_num[1]], ylabel=labels[plot_num[2]], zlabel=labels[plot_num[3]])
-plot!([cp[plot_num[1]]], [cp[plot_num[2]]], [cp[plot_num[3]]],markershape=:circle, markersize=10, label="critical point")
-#savefig("img/phasePlot_criticalpoint_$vd")
-
-
-
-#Plot mRna, p2,pn
-plot(sol, title="PER Oscillator (vd=$vd)", vars=collect(plot_num) , labels= labels[ collect(plot_num)' ])
-ylabel!("Concentration(uM)")
-xlabel!("t(hr)")
-#savefig("img/timeSeries_three_$vd.png")
-
-
-# Gif plot
-animTimeSeries = @animate for vd=0.1:0.1:3
-    sol = simulation(PER; vd=vd)
-    plot(sol, title="PER Oscillator (vd=$vd)", vars=collect(plot_num) , labels= labels[ collect(plot_num)' ])
-    ylabel!("Concentration(uM)")
-    xlabel!("t(hr)")
-end
-
-animPhase = @animate for vd=0.1:0.1:3
+function simulation(;vd=0.95)
+    labels = ["mRNA(m)" "PER(p0)" "PER-P(p1)" "PER-PP(p2)" "PER-Nucleus(pn)"]
+    PER= get_PER_MODEL()
     sol = simulation(PER; vd=vd)
     cp = solve_steady_state(PER; vd=vd)
-    plot(sol, vars=plot_num, title="Phase Plot (vd=$vd)", xlabel=labels[plot_num[1]], ylabel=labels[plot_num[2]], zlabel=labels[plot_num[3]])
-    plot!([cp[plot_num[1]]], [cp[plot_num[2]]], [cp[plot_num[3]]],markershape=:circle, markersize=10, label="critical point")
+    return labels, sol, cp
 end
 
-gif(animTimeSeries, "img/anim_timeSeries.gif", fps = 8)
-gif(animPhase, "img/anim_phasePlot.gif", fps = 8)
+
+# MAIN
+#simulation
+function main()
+    labels, sol, cp = simulation(vd=0.95)
+    # Static Plotting
+    plot_num = (1, 4, 5)
+
+    # Phase Plot with critical point
+    phase = plot(sol, vars=plot_num, title="Phase Plot (vd=$vd)", xlabel=labels[plot_num[1]], ylabel=labels[plot_num[2]], zlabel=labels[plot_num[3]])
+    plot!(phase, [cp[plot_num[1]]], [cp[plot_num[2]]], [cp[plot_num[3]]],markershape=:circle, markersize=10, label="critical point")
+
+    #Plot mRna, p2,pn
+    time = plot(sol, title="PER Oscillator (vd=$vd)", vars=collect(plot_num) , labels= labels[ collect(plot_num)' ])
+    ylabel!(time, "Concentration(uM)")
+    xlabel!(time, "t(hr)")
+
+    # savefig("img/phasePlot_criticalpoint_$vd")
+    # savefig("img/timeSeries_three_$vd.png")
+    display(phase)
+    display(time)
+end
+######
+if abspath(PROGRAM_FILE) == @__FILE__
+    using Plots
+    gr(dpi=400)
+    main()
+end

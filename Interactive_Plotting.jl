@@ -1,5 +1,5 @@
 using Interact
-using Plots
+using Plotsa
 include("MODEL_PerGoldbeter1996.jl")
 gr()
 # Define adjustable function with predefined parametets
