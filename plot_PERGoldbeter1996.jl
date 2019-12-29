@@ -215,9 +215,3 @@ end
 if abspath(PROGRAM_FILE) == @__FILE__
     main()
 end
-
-animTime_movingCircle = animTimeSeries_moving(plot_num = (1,5),t_tick=1)
-gif(animTime_movingCircle, "img/animTime_movingCircle.gif", fps = 8)
-
-animTime_movingCircle_p012 = animTimeSeries_moving(plot_num = (2,3,4),t_tick=1)
-gif(animTime_movingCircle_p012, "img/animTime_movingCircle_p012.gif",fps=8)
