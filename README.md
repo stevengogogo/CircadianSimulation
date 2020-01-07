@@ -45,11 +45,14 @@ The circadian rhythm is a biological oscillator that behaves limit cycle and is 
 
 <img src="img/animTime_movingCircleD.gif">
 
+### Delay and Cascading Phosphorylation
+
+<img src="img/animTime_movingCircle_p012.gif">
+
 ## Scripts
 
 - Mathematical model of PER model
     - <a href="MODEL_PerGoldbeter1996.jl">MODEL_PerGoldbeter1996.jl</a>
-    - <a href="MODEL_PerGOldbeter1996.ipynb">MODEL_PerGOldbeter1996.ipynb</a>
 - Plotting
     - <a href="plot_PERGoldbeter1996.jl">plot_PERGoldbeter1996.jl</a>
 - Interactive Plotting
